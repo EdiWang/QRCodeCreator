@@ -1,0 +1,141 @@
+﻿<Page
+    x:Class="QRCodeCreator.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Style="{StaticResource PageStyle}"
+    DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
+    mc:Ignorable="d">
+    <Grid
+        x:Name="ContentArea"
+        Margin="{StaticResource MediumLeftTopRightBottomMargin}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Canvas x:Name="PrintCanvas" Opacity="0" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" />
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Row="0" Grid.Column="0" 
+                         Text="{Binding SourceText, Mode=TwoWay}" 
+                         Header="Text" 
+                         PlaceholderText="Enter Text" 
+                         Margin="0,0,10,0" 
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         MaxHeight="100"
+                         MaxLength="768" />
+
+                <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,10,0">
+                    <ComboBox Header="ECC Level" 
+                              HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding Path=EccModes}" 
+                              SelectedItem="{Binding SelectedEcc, Mode=TwoWay}" />
+                </Grid>
+
+                <Grid Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Header="Foreground" x:Name="TxtColorHex"
+                                 HorizontalAlignment="Stretch" Width="90" IsReadOnly="True" Text="{Binding ForegroundColor, Converter={StaticResource ColorToHexStringConverter}}" />
+                        <Button x:Name="BtnPickColor" Style="{StaticResource IconButtonStyle}" 
+                                Click="BtnPickColor_OnClick"
+                                VerticalAlignment="Bottom" Height="30" Width="30">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B1;" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="0" Grid.Column="3" HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Header="Background" x:Name="TxtBackgroundColorHex"
+                                 HorizontalAlignment="Stretch" Width="90" IsReadOnly="True" Text="{Binding BackgroundColor, Converter={StaticResource ColorToHexStringConverter}}" />
+                        <Button x:Name="BtnPickBackgroundColor" Style="{StaticResource IconButtonStyle}" 
+                                Click="BtnPickBackgroundColor_OnClick"
+                                VerticalAlignment="Bottom" Height="30" Width="30">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B1;" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                        Margin="0,10,0,0"
+                        Content="Make QR Code" 
+                        Background="{StaticResource SystemControlBackgroundAccentBrush}"
+                        Foreground="White"
+                        Command="{Binding CommandGetQRCode}" />
+
+                <TextBlock Text="{Binding SourceText.Length}" Foreground="#666" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="0" Grid.Column="0" />
+            </Grid>
+
+            <Border Grid.Row="1" BorderBrush="#EEE" BorderThickness="1" Margin="0,10,0,0">
+                <Viewbox>
+                    <Image Source="{Binding Bitmap, Mode=TwoWay}" />
+                </Viewbox>
+            </Border>
+
+            <StackPanel  Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Command="{Binding CommandSave}" Style="{ThemeResource IconButtonStyle}">
+                    <SymbolIcon Symbol="Save" Margin="0,0,5,0" />
+                </Button>
+                <Button x:Name="BtnCopy" Click="BtnCopy_OnClick" Style="{ThemeResource IconButtonStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE16F;" />
+                </Button>
+                <Button x:Name="BtnShare" Click="BtnShare_OnClick" Style="{ThemeResource IconButtonStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;" />
+                </Button>
+                <Button x:Name="BtnPrint" Click="BtnPrint_OnClick" Style="{ThemeResource IconButtonStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2F6;" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ContentDialog x:Name="DigForegroundColorPicker" PrimaryButtonText="OK" Title="Foreground Color">
+            <Grid>
+                <ColorPicker Grid.Row="0"
+                             Margin="0,20,0,0" 
+                             x:Name="ColorPickerForeground" 
+                             IsColorSliderVisible="True"
+                             IsColorChannelTextInputVisible="False"
+                             IsHexInputVisible="True"
+                             IsAlphaEnabled="False"
+                             IsAlphaSliderVisible="True"
+                             IsAlphaTextInputVisible="True"
+                             Color="{Binding ForegroundColor, Mode=TwoWay}" 
+                             HorizontalContentAlignment="Stretch" 
+                             HorizontalAlignment="Stretch"/>
+            </Grid>
+        </ContentDialog>
+
+        <ContentDialog x:Name="DigBackgroundColorPicker" PrimaryButtonText="OK" Title="Background">
+            <Grid>
+                <ColorPicker Grid.Row="0"
+                             Margin="0,20,0,0" 
+                             x:Name="ColorPickerBackground" 
+                             IsColorSliderVisible="True"
+                             IsColorChannelTextInputVisible="False"
+                             IsHexInputVisible="True"
+                             IsAlphaEnabled="False"
+                             IsAlphaSliderVisible="True"
+                             IsAlphaTextInputVisible="True"
+                             Color="{Binding BackgroundColor, Mode=TwoWay}" 
+                             HorizontalContentAlignment="Stretch" 
+                             HorizontalAlignment="Stretch"/>
+            </Grid>
+        </ContentDialog>
+    </Grid>
+</Page>
