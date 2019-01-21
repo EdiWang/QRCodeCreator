@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using QRCodeCreator.QRCoderCore;
+using QRCoder;
 
 namespace QRCodeCreator.ViewModels
 {

@@ -12,8 +12,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using QRCodeCreator.Helpers;
-using QRCodeCreator.QRCoderCore;
+using QRCoder;
 
 namespace QRCodeCreator.ViewModels
 {
@@ -124,7 +123,7 @@ namespace QRCodeCreator.ViewModels
             var qrGenerator = new QRCodeGenerator();
             var qrCodeData = qrGenerator.CreateQrCode(SourceText, eccLevel);
             var qrCode = new BitmapByteQRCode(qrCodeData);
-            var qrCodeImage = qrCode.GetGraphic(20, this.ForegroundColor, this.BackgroundColor);
+            var qrCodeImage = qrCode.GetGraphic(20, ForegroundColor.ToHex(), BackgroundColor.ToHex());
 
             using (var stream = new InMemoryRandomAccessStream())
             {
